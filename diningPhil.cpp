@@ -106,7 +106,7 @@ int main()
        exit(1);
      }
   }
-
+//test for change
   printf ("all threads created\n");
 
   for(int i=0;i<5;i++) {
