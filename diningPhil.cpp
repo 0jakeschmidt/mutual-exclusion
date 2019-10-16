@@ -29,24 +29,23 @@ void put_forks(int i){
 
    int left = (i+1)%5;
    int right =i;
-  sem_post(&forks[left]);
-  sem_post(&forks[right]);
+   sem_post(&forks[left]);
+   sem_post(&forks[right]);
        
 
 }
  
 void takeForks(int i){
 
-  int left = (i+1)%5;
-  int right =i;
-
+   int left = (i+1)%5;
+   int right =i;
 
    multex.lock();
-  sem_wait(&forks[left]);
-  sem_wait(&forks[right]);
-  multex.unlock();
- printf("philosipher %d: is eating with forks:  %d and %d \n",i,left,right);
- 
+   sem_wait(&forks[left]);
+   sem_wait(&forks[right]);
+   multex.unlock();
+
+   printf("philosipher %d: is eating with forks:  %d and %d \n",i,left,right);
 
 }
 
@@ -64,8 +63,8 @@ void * phils(void * noparam) {
    int* iD = &philNum;
 
    printf("philospher %d:  Starting \n",philNum);
-  int leftFork = (philNum+1)%5;
-  int rightFork = philNum;
+   int leftFork = (philNum+1)%5;
+   int rightFork = philNum;
 
   while (1==1)  {
 
@@ -77,38 +76,42 @@ void * phils(void * noparam) {
     printf("philosipher %d: needs to eat \n",philNum);
    
     takeForks(*iD);
-     e = (int) rand() % 5;
-     printf("philosipher %d: is eating for %d\n",philNum,e);
-     sleep(e);
-     put_forks(*iD);
+    e = (int) rand() % 5;
+    printf("philosipher %d: is eating for %d\n",philNum,e);
+    sleep(e);
+    put_forks(*iD);
   
     printf("philosipher %d: put the forks down \n",philNum);
 
-}
+  }
 }
 
 int main() 
 { 
-// seed time 
-    srand((unsigned)time(0));
+ // seed time 
+ srand((unsigned)time(0));
 
-     pthread_t philosophers[5];
-      for(int i=0; i<5; i++){
-        sem_init(&forks[i],0,0);
-      }
+ // initialize all semaphores
+ for(int i=0; i<5; i++){
+     sem_init(&forks[i],0,1);
+  }
 
-for (int i =0; i<5; i++) {
-    printf("making philosopher %d \n",i);
+
+ pthread_t philosophers[5];
+
+ for (int i =0; i<5; i++) {
+    
      if (pthread_create(&philosophers[i], 0, phils, 0)) {
        perror("error creating the thread");
        exit(1);
      }
   }
-   printf ("all threads created\n");
 
-   for(int i=0;i<5;i++) {
+  printf ("all threads created\n");
+
+  for(int i=0;i<5;i++) {
     pthread_join(philosophers[i], 0);
 
-    }
+  }
 
 } 
