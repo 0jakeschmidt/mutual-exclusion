@@ -22,12 +22,10 @@ sem_t full;
 vector<int> POT(0);
 
 
-int id =0;
+int id =0, sizePot=100;
 
  
 void getFood(int i){
-
-   
 
    // lock for size check
    sem_wait(&Mutex);
@@ -96,14 +94,14 @@ void * sav(void * noparam) {
 }
 
 void * cook(void * noparam){
-	int randNum;
+	
 	while(1==1){
 	sem_wait(&empty);
 	printf("SOMEONE WOKE THE COOK \n\n");
 	
-	 for(int i=0; i<100; i++){
- 		randNum = (int) rand() % 100;
- 		POT.push_back(randNum);
+	 for(int i=0; i<sizePot; i++){
+ 		
+ 		POT.push_back(i);
       }
   	sem_post(&full);
   	
@@ -111,11 +109,16 @@ void * cook(void * noparam){
 
 }
 
-int main() 
+int main(int argc, char* argv[]) 
 { 
- int randNum;
+ 	int randNum;
  // seed time 
- srand((unsigned)time(0));
+	srand((unsigned)time(0));
+
+	if (argc != 0) {
+	    sizePot = atoi( argv[1] );
+	  } 
+
 
      // initialize all semaphores
      sem_init(&Mutex,0,1);
