@@ -31,7 +31,8 @@ after job they go back to all drinking coffee for random amount of time.
 
 
 */
-bool flag = false;
+//bool flag = false;
+sem_t flag;
 sem_t Mutex;
 sem_t client,tech,jobs,help;
 sem_t threeReady;
@@ -44,18 +45,25 @@ int id =0;
 
 void readyToFixStuff(int i){
     int t;
+ //   printf("tech num : %d is waiting in ready to fix stuff\n",i);
    // lock for size check 
    sem_wait(&Mutex);
   
    // we need to check if 2or more techs are ready has food:
-   if (ready.size() >= 2 && flag){
+   if (ready.size() >= 2){
+      printf("waiting on flag with tech %d\n",i );
+      sem_wait(&flag);
     // ready queue is set and techs can go to work
-      flag =false;
+      printf("tech num : %d made it into the if\n",i);
+      for(int i =0; i < ready.size(); i++){
+        printf("in ready at pos %d is tech num %d\n",i,ready[i] );
+      }
+      //flag =false;
       sem_post(&threeReady);
       sem_post(&threeReady);
-      int tech1 = ready.at(0);
+      int tech1 = ready.back();
       ready.pop_back();
-      int tech2 = ready.at(0);
+      int tech2 = ready.back();
       ready.pop_back();
       printf("techs %d , %d, %d: working on problem \n",i,tech2,tech1);
       sem_post(&Mutex);
@@ -71,6 +79,7 @@ void readyToFixStuff(int i){
     }else{
       // add yourself to the queue and wait for the signal to be triggered
       ready.push_back(i);
+     // printf("tech num : %d made it into the else\n",i);
       sem_post(&Mutex);
       sem_wait(&threeReady);
       //released from queue now go to work
@@ -100,9 +109,8 @@ void * clientProcess(void * noparam) {
 
     printf("Something broke, client will call help desk \n");
 
-    sem_wait(&Mutex);
-    flag = true;
-    sem_post(&Mutex);
+    sem_post(&flag);
+
 
     sem_post(&help);
     sem_wait(&client);
@@ -151,7 +159,7 @@ void * techProcess(void * noparam){
 
    //go fix stuff pass ID
   readyToFixStuff(*iD);
-
+  printf("tech %d: is realeased from help \n",techNum);
     
   }
 
@@ -168,6 +176,7 @@ int main(int argc, char* argv[])
 
      // initialize all semaphores
      sem_init(&Mutex,0,1);
+     sem_init(&flag,0,0);
      sem_init(&client,0,0);
      sem_init(&tech,0,0);
      sem_init(&jobs,0,0);
