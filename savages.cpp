@@ -72,7 +72,7 @@ void * sav(void * noparam) {
    int* iD = &savNum;
 
    printf("savage %d:  Starting \n",savNum);
-   sleep(4);
+   
    
 
   while (1==1)  {
