@@ -54,10 +54,7 @@ void readyToFixStuff(int i){
       printf("waiting on flag with tech %d\n",i );
       sem_wait(&flag);
     // ready queue is set and techs can go to work
-      printf("tech num : %d made it into the if\n",i);
-      for(int i =0; i < ready.size(); i++){
-        printf("in ready at pos %d is tech num %d\n",i,ready[i] );
-      }
+   
       //flag =false;
       sem_post(&threeReady);
       sem_post(&threeReady);
