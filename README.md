@@ -23,7 +23,7 @@ Anything not working:
 
 ---
 
-grading: /50<BR>
+grading: 46/50<BR>
 problem1: 14/15<BR>
   * compiles, works yes
   * issues
